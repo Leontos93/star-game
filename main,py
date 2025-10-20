@@ -1,10 +1,12 @@
 import arcade
+import random
 
 # Constants
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 WINDOW_TITLE = "Star Collection"
 PLAYER_MOVEMENT_SPEED = 5
+STAR_COUNT = 50
 
 
 class MyGame(arcade.Window):
@@ -13,10 +15,11 @@ class MyGame(arcade.Window):
         self.background_color = arcade.csscolor.CORNFLOWER_BLUE
         self.player_list = None
         self.player_sprite = None
+        self.star_list = None
         self.setup()
-        self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite)
 
     def setup(self):
+        # Створення гравця
         self.player_list = arcade.SpriteList()
         self.player_texture = arcade.load_texture(
             ":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png"
@@ -25,13 +28,22 @@ class MyGame(arcade.Window):
         self.player_sprite.center_x = WINDOW_WIDTH / 2
         self.player_sprite.center_y = WINDOW_HEIGHT / 2
         self.player_list.append(self.player_sprite)
+        # Створення монет
+        self.star_list = arcade.SpriteList()
+        for i in range(STAR_COUNT):
+            star = arcade.Sprite(":resources:images/items/star.png", 0.2)
+            star.center_x = random.randrange(WINDOW_WIDTH)
+            star.center_y = random.randrange(WINDOW_HEIGHT)
+            self.star_list.append(star)
 
     def on_draw(self):
         self.clear()
-        arcade.draw_sprite(self.player_sprite)
+        self.star_list.draw()
+        self.player_list.draw()
 
     def on_update(self, delta_time):
-        self.physics_engine.update()
+        self.player_list.update()
+        self.star_list.update()
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP or key == arcade.key.W:
