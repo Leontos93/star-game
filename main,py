@@ -29,7 +29,6 @@ class MyGame(arcade.Window):
         arcade.draw_sprite(self.player_sprite)
 
     def on_update(self, delta_time):
-        self.player_list.update()
         self.physics_engine.update()
 
     def on_key_press(self, key, modifiers):
