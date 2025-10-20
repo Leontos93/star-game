@@ -1,7 +1,7 @@
 import arcade
 import random
 
-# Constants
+# --- Константи ---
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 WINDOW_TITLE = "Star Collection"
@@ -10,38 +10,57 @@ STAR_COUNT = 50
 
 
 class MyGame(arcade.Window):
+    """Основний клас нашої гри"""
+
     def __init__(self):
         super().__init__(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
         self.background_color = arcade.csscolor.CORNFLOWER_BLUE
+
+        # Ініціалізуємо атрибути, які будуть створені в setup()
         self.player_list = None
         self.player_sprite = None
         self.star_list = None
-        self.score = 0
 
-    def setup(self):
-        self.player_list = arcade.SpriteList()
-        self.star_list = arcade.SpriteList()
-        self.player_texture = arcade.load_texture(
-            ":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png"
-        )
-        self.player_sprite = arcade.Sprite(self.player_texture)
-        self.player_sprite.center_x = WINDOW_WIDTH / 2
-        self.player_sprite.center_y = WINDOW_HEIGHT / 2
-        self.player_list.append(self.player_sprite)
-        for i in range(STAR_COUNT):
-            star = arcade.Sprite(":resources:images/items/star.png", 0.2)
-            star.center_x = random.randrange(WINDOW_WIDTH)
-            star.center_y = random.randrange(WINDOW_HEIGHT)
-            self.star_list.append(star)
         self.score = 0
         self.game_over = False
 
+    def setup(self):
+        """Налаштовує гру для нового раунду."""
+        self.game_over = False
+        self.score = 0
+
+        # Створюємо списки спрайтів
+        self.player_list = arcade.SpriteList()
+        self.star_list = arcade.SpriteList()
+
+        # Створення гравця
+        self.player_sprite = arcade.Sprite(
+            ":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png"
+        )
+        self.player_sprite.center_x = WINDOW_WIDTH / 2
+        self.player_sprite.center_y = WINDOW_HEIGHT / 2
+        self.player_list.append(self.player_sprite)
+
+        # Створення зірок
+        for _ in range(STAR_COUNT):
+            star = arcade.Sprite(":resources:images/items/star.png", 0.3)
+            star.center_x = random.randrange(WINDOW_WIDTH)
+            star.center_y = random.randrange(WINDOW_HEIGHT)
+            self.star_list.append(star)
+
     def on_draw(self):
+        """Метод для малювання."""
         self.clear()
+
+        # Малюємо всі наші спрайти
         self.star_list.draw()
         self.player_list.draw()
-        output = f"Score: {self.score}"
-        arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
+
+        # Малюємо рахунок
+        score_text = f"Score: {self.score}"
+        arcade.draw_text(score_text, 10, 10, arcade.csscolor.WHITE, 18)
+
+        # Малюємо екран перемоги, якщо гра закінчена
         if self.game_over:
             arcade.draw_text(
                 "YOU WIN!",
@@ -53,29 +72,48 @@ class MyGame(arcade.Window):
             )
 
     def on_update(self, delta_time):
+        """Вся ігрова логіка."""
+        # Якщо гра закінчена, нічого не оновлюємо
+        if self.game_over:
+            return
+
+        # Оновлюємо спрайти (це рухає гравця)
         self.player_list.update()
-        self.star_list.update()
-        self.player_list.update()
+        # Перевірка, чи не вийшов гравець за межі екрана
+        # Ліва межа
         if self.player_sprite.left < 0:
             self.player_sprite.left = 0
+        # Права межа
         elif self.player_sprite.right > WINDOW_WIDTH:
             self.player_sprite.right = WINDOW_WIDTH
+
+        # Нижня межа
         if self.player_sprite.bottom < 0:
             self.player_sprite.bottom = 0
+        # Верхня межа
         elif self.player_sprite.top > WINDOW_HEIGHT:
             self.player_sprite.top = WINDOW_HEIGHT
+        # Перевірка зіткнень гравця з зірками
         star_hit_list = arcade.check_for_collision_with_list(
             self.player_sprite, self.star_list
         )
-        if not self.game_over:
-            self.player_list.update()
+
+        # Обробляємо кожне зіткнення
         for star in star_hit_list:
             star.remove_from_sprite_lists()
             self.score += 1
-            if len(self.star_list) == 0:
-                self.game_over = True
+
+        # Перевірка на умову перемоги
+        if (
+            not self.star_list
+        ):  # Більш "пітонічний" спосіб перевірки, чи список порожній
+            self.game_over = True
 
     def on_key_press(self, key, modifiers):
+        """Викликається при натисканні клавіші."""
+        if self.game_over:
+            return
+
         if key == arcade.key.UP or key == arcade.key.W:
             self.player_sprite.change_y = PLAYER_MOVEMENT_SPEED
         elif key == arcade.key.DOWN or key == arcade.key.S:
@@ -86,18 +124,29 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
 
     def on_key_release(self, key, modifiers):
+        """Викликається при відпусканні клавіші."""
+        if self.game_over:
+            return
 
-        if key == arcade.key.UP or key == arcade.key.W:
+        if (
+            key == arcade.key.UP
+            or key == arcade.key.W
+            or key == arcade.key.DOWN
+            or key == arcade.key.S
+        ):
             self.player_sprite.change_y = 0
-        elif key == arcade.key.DOWN or key == arcade.key.S:
-            self.player_sprite.change_y = 0
-        elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.player_sprite.change_x = 0
-        elif key == arcade.key.RIGHT or key == arcade.key.D:
+
+        if (
+            key == arcade.key.LEFT
+            or key == arcade.key.A
+            or key == arcade.key.RIGHT
+            or key == arcade.key.D
+        ):
             self.player_sprite.change_x = 0
 
 
 def main():
+    """Основна функція для запуску гри."""
     window = MyGame()
     window.setup()
     arcade.run()
