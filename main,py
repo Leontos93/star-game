@@ -10,12 +10,21 @@ class MyGame(arcade.Window):
     def __init__(self):
         super().__init__(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
         self.background_color = arcade.csscolor.CORNFLOWER_BLUE
+        self.player_list = arcade.SpriteList()
+        self.player_texture = arcade.load_texture(
+            ":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png"
+        )
+        self.player_sprite = arcade.Sprite(self.player_texture)
+        self.player_sprite.center_x = WINDOW_WIDTH / 2
+        self.player_sprite.center_y = WINDOW_HEIGHT / 2
+        self.player_list.append(self.player_sprite)
 
     def setup(self):
         pass
 
     def on_draw(self):
-        arcade.start_render()
+        self.clear()
+        arcade.draw_sprite(self.player_sprite)
 
 
 def main():
