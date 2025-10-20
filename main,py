@@ -3,13 +3,16 @@ import arcade
 # Constants
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
-WINDOW_TITLE = "Star Colection"
+WINDOW_TITLE = "Star Collection"
 
 
 class MyGame(arcade.Window):
     def __init__(self):
         super().__init__(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
         self.background_color = arcade.csscolor.CORNFLOWER_BLUE
+
+    def setup(self):
+        pass
 
     def on_draw(self):
         arcade.start_render()
