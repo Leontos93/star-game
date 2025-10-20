@@ -16,11 +16,11 @@ class MyGame(arcade.Window):
         self.player_list = None
         self.player_sprite = None
         self.star_list = None
-        self.setup()
+        self.score = 0
 
     def setup(self):
-        # Створення гравця
         self.player_list = arcade.SpriteList()
+        self.star_list = arcade.SpriteList()
         self.player_texture = arcade.load_texture(
             ":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png"
         )
@@ -28,22 +28,29 @@ class MyGame(arcade.Window):
         self.player_sprite.center_x = WINDOW_WIDTH / 2
         self.player_sprite.center_y = WINDOW_HEIGHT / 2
         self.player_list.append(self.player_sprite)
-        # Створення зірок
-        self.star_list = arcade.SpriteList()
         for i in range(STAR_COUNT):
             star = arcade.Sprite(":resources:images/items/star.png", 0.2)
             star.center_x = random.randrange(WINDOW_WIDTH)
             star.center_y = random.randrange(WINDOW_HEIGHT)
             self.star_list.append(star)
+        self.score = 0
 
     def on_draw(self):
         self.clear()
         self.star_list.draw()
         self.player_list.draw()
+        output = f"Score: {self.score}"
+        arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
 
     def on_update(self, delta_time):
         self.player_list.update()
         self.star_list.update()
+        star_hit_list = arcade.check_for_collision_with_list(
+            self.player_sprite, self.star_list
+        )
+        for star in star_hit_list:
+            star.remove_from_sprite_lists()
+            self.score += 1
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP or key == arcade.key.W:
@@ -69,6 +76,7 @@ class MyGame(arcade.Window):
 
 def main():
     window = MyGame()
+    window.setup()
     arcade.run()
 
 
