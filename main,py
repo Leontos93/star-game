@@ -55,6 +55,15 @@ class MyGame(arcade.Window):
     def on_update(self, delta_time):
         self.player_list.update()
         self.star_list.update()
+        self.player_list.update()
+        if self.player_sprite.left < 0:
+            self.player_sprite.left = 0
+        elif self.player_sprite.right > WINDOW_WIDTH:
+            self.player_sprite.right = WINDOW_WIDTH
+        if self.player_sprite.bottom < 0:
+            self.player_sprite.bottom = 0
+        elif self.player_sprite.top > WINDOW_HEIGHT:
+            self.player_sprite.top = WINDOW_HEIGHT
         star_hit_list = arcade.check_for_collision_with_list(
             self.player_sprite, self.star_list
         )
