@@ -28,7 +28,7 @@ class MyGame(arcade.Window):
         self.player_sprite.center_x = WINDOW_WIDTH / 2
         self.player_sprite.center_y = WINDOW_HEIGHT / 2
         self.player_list.append(self.player_sprite)
-        # Створення монет
+        # Створення зірок
         self.star_list = arcade.SpriteList()
         for i in range(STAR_COUNT):
             star = arcade.Sprite(":resources:images/items/star.png", 0.2)
