@@ -4,6 +4,7 @@ import arcade
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 WINDOW_TITLE = "Star Collection"
+PLAYER_MOVEMENT_SPEED = 5
 
 
 class MyGame(arcade.Window):
@@ -18,6 +19,7 @@ class MyGame(arcade.Window):
         self.player_sprite.center_x = WINDOW_WIDTH / 2
         self.player_sprite.center_y = WINDOW_HEIGHT / 2
         self.player_list.append(self.player_sprite)
+        self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite)
 
     def setup(self):
         pass
@@ -25,6 +27,31 @@ class MyGame(arcade.Window):
     def on_draw(self):
         self.clear()
         arcade.draw_sprite(self.player_sprite)
+
+    def on_update(self, delta_time):
+        self.player_list.update()
+        self.physics_engine.update()
+
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.UP or key == arcade.key.W:
+            self.player_sprite.change_y = PLAYER_MOVEMENT_SPEED
+        elif key == arcade.key.DOWN or key == arcade.key.S:
+            self.player_sprite.change_y = -PLAYER_MOVEMENT_SPEED
+        elif key == arcade.key.LEFT or key == arcade.key.A:
+            self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+
+    def on_key_release(self, key, modifiers):
+
+        if key == arcade.key.UP or key == arcade.key.W:
+            self.player_sprite.change_y = 0
+        elif key == arcade.key.DOWN or key == arcade.key.S:
+            self.player_sprite.change_y = 0
+        elif key == arcade.key.LEFT or key == arcade.key.A:
+            self.player_sprite.change_x = 0
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.player_sprite.change_x = 0
 
 
 def main():
