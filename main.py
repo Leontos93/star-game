@@ -106,7 +106,7 @@ class MyGame(arcade.Window):
             self.score += 1
 
         # Check for the win condition
-        if not self.star_list:  # A more "Pythonic" way to check if a list is empty
+        if not self.star_list:
             self.game_over = True
 
     def on_key_press(self, key, modifiers):
